@@ -2,19 +2,27 @@ using WebDespair.Data;
 using WebDespair.Dtos;
 using WebDespair.Endpoints;
 
-var builder = WebApplication.CreateBuilder(args);
+internal class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-var connString = builder.Configuration.GetConnectionString("GameStore");
+        var connString = builder.Configuration.GetConnectionString("GameStore");
 
-builder.Services.AddSqlite<GameStoreContext>(connString);
-
-
-var app = builder.Build();
+        builder.Services.AddSqlite<GameStoreContext>(connString);
 
 
-app.MapGamesEndpoints();
+        var app = builder.Build();
 
-app.MigrateDb();
 
-app.Run();
+        app.MapGamesEndpoints();
+        app.MapGenresEndPoints();
+
+        await app.MigrateDbAsync();
+
+
+        app.Run();
+    }
+}
  
