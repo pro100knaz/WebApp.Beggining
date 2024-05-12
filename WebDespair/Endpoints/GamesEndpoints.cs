@@ -9,7 +9,7 @@ namespace WebDespair.Endpoints
     {
         static Random rnd = new Random();
         const string getGameEndpointName = "GetGame";
-        private static readonly List<GameDto> games = Enumerable.Range(1, 10).Select(i => new GameDto(i,
+        private static readonly List<GameSummaryDto> games = Enumerable.Range(1, 10).Select(i => new GameSummaryDto(i,
             $"Game {i}",
             $"Genre {i}",
             (decimal)(i + rnd.NextDouble() * rnd.Next(10, 100)),
@@ -26,11 +26,14 @@ namespace WebDespair.Endpoints
 
 
             //Get /games/1
-           group.MapGet("/{id}", (int id) =>
+           group.MapGet("/{id}", (int id, GameStoreContext dbContext) =>
                 {
-                    GameDto? game = games.Find(game => game.Id == id);
 
-                    return game is null ? Results.NotFound() : Results.Ok(game);
+                    Game? game = dbContext.Games.Find(id);
+
+                    return game is null ? 
+                        Results.NotFound() : 
+                        Results.Ok(game.ToGameSummaryDto());
 
                 })
                 .WithName(getGameEndpointName);
@@ -41,12 +44,11 @@ namespace WebDespair.Endpoints
                {
 
                Game game = newGame.ToEntity();
-               game.Genre = dbContext.Genres.Find(newGame.GenreId);
 
                 dbContext.Games.Add(game);
                 dbContext.SaveChanges();
 
-                return Results.CreatedAtRoute(getGameEndpointName, new { id = game.Id }, game.ToDto());
+                return Results.CreatedAtRoute(getGameEndpointName, new { id = game.Id }, game.ToGameDetailsDto());
             })
             .WithParameterValidation();
 
@@ -63,7 +65,7 @@ namespace WebDespair.Endpoints
                     return Results.NotFound();
                 }
 
-                games[index] = new GameDto(
+                games[index] = new GameSummaryDto(
                     id,
                     updatedGame.Name is null ? game.Name : updatedGame.Name,
                     updatedGame.Genre is null ? game.Genre : updatedGame.Genre,

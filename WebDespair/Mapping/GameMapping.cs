@@ -16,11 +16,20 @@ namespace WebDespair.Mapping
                 ReleaseDate = game.ReleaseDate
             }; 
 
-        public static GameDto ToDto(this Game game) =>
+        public static GameSummaryDto ToGameSummaryDto(this Game game) =>
             new(
                 game.Id,
                 game.Name,
                 game.Genre!.Name,
+                game.Price,
+                game.ReleaseDate
+            );
+
+        public static GameDetailsDto ToGameDetailsDto(this Game game) =>
+            new(
+                game.Id,
+                game.Name,
+                game.Genre!.Id,
                 game.Price,
                 game.ReleaseDate
             );

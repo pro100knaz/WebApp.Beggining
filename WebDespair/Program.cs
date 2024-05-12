@@ -17,3 +17,4 @@ app.MapGamesEndpoints();
 app.MigrateDb();
 
 app.Run();
+ 
