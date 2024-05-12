@@ -33,5 +33,15 @@ namespace WebDespair.Mapping
                 game.Price,
                 game.ReleaseDate
             );
+
+
+        public static Game ToEntity(this UpdateGameDto game, int id) => new()
+            {
+                Id = id,
+                Name = game.Name,
+                GenreId = game.GenreId,
+                Price = game.Price,
+                ReleaseDate = game.ReleaseDate
+            };
     }
 }

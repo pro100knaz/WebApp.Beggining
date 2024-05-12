@@ -30,6 +30,8 @@ namespace WebDespair.Endpoints
                 {
 
                     Game? game = dbContext.Games.Find(id);
+                    game.Genre = dbContext.Genres.Find(game.GenreId);
+
 
                     return game is null ? 
                         Results.NotFound() : 
@@ -44,8 +46,10 @@ namespace WebDespair.Endpoints
                {
 
                Game game = newGame.ToEntity();
+               game.Genre = dbContext.Genres.Find(game.GenreId);
 
-                dbContext.Games.Add(game);
+            dbContext.Games.Add(game);
+
                 dbContext.SaveChanges();
 
                 return Results.CreatedAtRoute(getGameEndpointName, new { id = game.Id }, game.ToGameDetailsDto());
@@ -54,25 +58,20 @@ namespace WebDespair.Endpoints
 
 
             //Put /games
-           group.MapPut("/{id}", (int id, UpdateGameDto updatedGame) =>
+           group.MapPut("/{id}", (int id, UpdateGameDto updatedGame, GameStoreContext dbContext) =>
             {
-                var game = games.Find(game => game.Id == id);
+                var existingGame =  dbContext.Games.Find(id);
 
-                var index = games.FindIndex(game => game.Id == id);
-
-                if (index == -1)
+                if (existingGame is null)
                 {
                     return Results.NotFound();
                 }
 
-                games[index] = new GameSummaryDto(
-                    id,
-                    updatedGame.Name is null ? game.Name : updatedGame.Name,
-                    updatedGame.Genre is null ? game.Genre : updatedGame.Genre,
-                    updatedGame.Price,
-                    updatedGame.ReleaseDate
-                );
+               dbContext.Entry(existingGame)
+                   .CurrentValues
+                   .SetValues(updatedGame.ToEntity(id));
 
+               dbContext.SaveChanges();
                 return Results.NoContent();
 
             });
