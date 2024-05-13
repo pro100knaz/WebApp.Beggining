@@ -1,10 +1,14 @@
 ﻿@page "/"
+@inject GamesClient GameClient
 @using System.Globalization
 @using WebDespair.WebBlazor.Clients
 @using WebDespair.WebBlazor.Models
 
 <PageTitle>Game Store</PageTitle>
 
+<div class="mt-2">
+	<a class="btn btn-primary" role="button" href="/editgame"> New Game</a>
+</div>
 
 @if (games is null)
 {
@@ -41,12 +45,11 @@ else
 
 @code
 {
-	private GamesClient _Client = new();
 
 	private GameSummary[]? games;
 
 	protected override void OnInitialized()
 	{
-		games = _Client.GetGames();
+		games = GameClient.GetGames();
 	}
 }
