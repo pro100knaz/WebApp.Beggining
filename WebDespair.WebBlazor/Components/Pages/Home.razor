@@ -1,0 +1,48 @@
+﻿@page "/"
+@using System.Globalization
+@using WebDespair.WebBlazor.Models
+
+<PageTitle>Game Store</PageTitle>
+
+<table class="table table-striped table-bordered table-hover">
+	<thead class="table-dark">
+	<th>Id</th>
+	<th>Name</th>
+	<th>Genre</th>
+	<th class="text-end">Price</th>
+	<th>Release Date</th>
+	</thead>
+	<tbody>
+		@foreach (var game in games)
+		{
+			<tr>
+				<td>@game.Id</td>
+				<td>@game.Genre</td>
+				<td>@game.Name</td>
+				<td class="text-end">@game.Price.ToString("C2", new CultureInfo("en-US"))</td>
+				<td>@game.ReleaseDate</td>
+				<td>
+
+				</td>
+			</tr>
+		}
+
+	</tbody>
+</table>
+
+@code
+{
+	static Random rnd = new();
+
+	private GameSummary[] games = Enumerable.Range(1, 10).Select(i => new GameSummary()
+	{
+		Id = i,
+		Genre = $"Genre {i}",
+		Name = $"Total War {i}",
+		Price = System.Math.Round((decimal)(i + (decimal)rnd.NextDouble()*rnd.Next(10, 80)), 2),
+		ReleaseDate = new DateOnly(2000,10,i),
+	}).ToArray();
+
+
+
+}
