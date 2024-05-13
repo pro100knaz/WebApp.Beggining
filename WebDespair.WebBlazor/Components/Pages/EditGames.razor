@@ -1,15 +1,18 @@
 ﻿@page "/editgame"
+@page "/editgame/{id:int}"
+
+
 @inject NavigationManager NavigationManager
 @inject GamesClient GamesClient
 @inject GenresClient GenresClient
 @using WebDespair.WebBlazor.Clients
 @using WebDespair.WebBlazor.Models
 
-<PageTitle>New game</PageTitle>
+<PageTitle>@_Title</PageTitle>
 
-<h3>New game</h3>
+<h3>@_Title</h3>
 
-@if (genres is null)
+@if (_Genres is null || Game is null)
 {
 	<p><em>Loading...</em></p>
 }
@@ -32,7 +35,7 @@ else
 					<InputSelect id="genre" @bind-Value="Game.GenreId" class="form-select">
 						<option value=""> Select a genre </option>
 
-						@foreach (var genre in genres)
+						@foreach (var genre in _Genres)
 						{
 							<option value="@genre.Id">@genre.Name</option>
 						}
@@ -62,25 +65,62 @@ else
 @code {
 
 
+	[Parameter]
+	public int? Id { get; set;}
+
 	[SupplyParameterFromForm]
-	private GameDetails Game { get; set; } = new()
+	private GameDetails? Game { get; set; }
+
+	private string _Title = string.Empty;
+
+	private Genre[]? _Genres;
+
+	protected override void OnParametersSet()
+	{
+		if (Game is not null)
 		{
-			Name = string.Empty,
-			ReleaseDate = DateOnly.FromDateTime(DateTime.Now)
-		};
+			return;
+		}
 
+		if (Id is not null)
+		{
+			Game = GamesClient.GetGame(Id.Value);
+			_Title = $"Edit  {Game.Name}";
+		}
+		else
+		{
+			Game = new()
+			{
+				Name = string.Empty,
+				ReleaseDate = DateOnly.FromDateTime(DateTime.Now)
+			};
+			_Title = "New Game Creating";
+		}
+	}
 
-	private Genre[]? genres;
 
 	protected override void OnInitialized()
 	{
-		genres = GenresClient.GetGenre();
+		_Genres = GenresClient.GetGenre();
 	}
 
 	private void HandleSubmit()
 	{
 
-		 GamesClient.AddGame(Game);
+		ArgumentNullException.ThrowIfNull(Game);
+
+
+		if (Id is null)
+		{
+			 GamesClient.AddGame(Game);
+
+		}
+		else
+		{
+			Game.Id = Id.Value;
+			GamesClient.UpdateGame(Game);
+		}
+
 		 NavigationManager.NavigateTo("");
 
 	}
