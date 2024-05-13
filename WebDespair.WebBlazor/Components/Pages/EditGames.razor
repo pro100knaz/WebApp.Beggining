@@ -1,0 +1,72 @@
+﻿@page "/editgame"
+@using WebDespair.WebBlazor.Clients
+@using WebDespair.WebBlazor.Models
+
+<PageTitle>New game</PageTitle>
+
+<h3>New game</h3>
+
+@if (genres is null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<div class="row">
+		<div class="col-md-4">
+
+			<EditForm Model="@Game" FormName="editGame">
+				<div class="mb-3">
+					<label for="name" class="form-label">Name:</label>
+					<InputText id="name" @bind-Value="Game.Name" class="form-control"/>
+				</div>
+
+				<div class="mb-3">
+					<label for="genre" class="form-label">Genre:</label>
+					<InputSelect id="genre" @bind-Value="Game.GenreId" class="form-select">
+						<option value=""> Select a genre </option>
+
+						@foreach (var genre in genres)
+						{
+							<option value="@genre.Id">@genre.Name</option>
+						}
+					</InputSelect>
+				</div>
+
+				<div class="mb-3">
+					<label for="price" class="form-label">Price:</label>
+					<InputNumber id="price" @bind-Value="Game.Price" class="form-control"/>
+				</div>
+
+				<div class="mb-3">
+					<label for="releaseDate" class="form-label">Release Date:</label>
+					<InputDate id="releaseDate" @bind-Value="Game.ReleaseDate" class="form-control"/>
+				</div>
+
+			</EditForm>
+
+		</div>
+	</div>
+}
+
+@code {
+
+
+
+	private GameDetails Game { get; set; } = new()
+		{
+			Name = string.Empty,
+			ReleaseDate = DateOnly.FromDateTime(DateTime.Now)
+		};
+
+	private GenresClient GenresClient = new();
+
+	private Genre[]? genres;
+
+	protected override void OnInitialized()
+	{
+		genres = GenresClient.GetGenre();
+	}
+
+
+}

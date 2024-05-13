@@ -17,7 +17,7 @@ namespace WebDespair.WebBlazor.Clients
 
 		public GameSummary[] GetGames()
 		{
-			Thread.Sleep(2000);
+			//Thread.Sleep(20000);
 			return [.. games];
 		}
 	}
