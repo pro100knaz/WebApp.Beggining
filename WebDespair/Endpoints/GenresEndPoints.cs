@@ -36,7 +36,6 @@ namespace WebDespair.Endpoints
 
                 return x.ToDto();
 
-
             });
 
             return group;

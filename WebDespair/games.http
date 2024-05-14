@@ -1,4 +1,4 @@
-﻿GET http://localhost:5148/games/177
+﻿GET http://localhost:5148/games/2
 
 ###
 
@@ -18,13 +18,13 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:5148/games/7
+PUT http://localhost:5148/games/4
 Content-Type: application/json
 
 {
    "name": "Total War Rome9",
   "genreId": "1",
-   "price": 39.99,
+   "price": 5,
   "releaseDate": "2029-10-18"
 }
 

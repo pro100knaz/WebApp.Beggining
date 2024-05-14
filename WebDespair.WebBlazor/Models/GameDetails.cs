@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+using WebDespair.WebBlazor.Converters;
 
 namespace WebDespair.WebBlazor.Models
 {
@@ -11,6 +13,7 @@ namespace WebDespair.WebBlazor.Models
         public required string Name { get; set; }
 
         [Required(ErrorMessage = "The Genre is required.")]
+        [JsonConverter(typeof(StringToIntConverter))]
         public string? GenreId { get; set; }
         [Range(1,100)]
         public decimal Price { get; set; }

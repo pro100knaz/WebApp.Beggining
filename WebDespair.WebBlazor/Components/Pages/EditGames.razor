@@ -21,13 +21,13 @@ else
 	<div class="row">
 		<div class="col-md-4">
 
-			<EditForm Model="@Game" FormName="editGame" OnValidSubmit="HandleSubmit">
-				<DataAnnotationsValidator/>
-				<ValidationSummary/>
+			<EditForm Model="@Game" FormName="editGame" OnValidSubmit="HandleSubmitAsync">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
 				<div class="mb-3">
 					<label for="name" class="form-label">Name:</label>
-					<InputText id="name" @bind-Value="Game.Name" class="form-control"/>
-					<ValidationMessage For="()=> Game.Name"/>
+					<InputText id="name" @bind-Value="Game.Name" class="form-control" />
+					<ValidationMessage For="()=> Game.Name" />
 				</div>
 
 				<div class="mb-3">
@@ -45,14 +45,14 @@ else
 
 				<div class="mb-3">
 					<label for="price" class="form-label">Price:</label>
-					<InputNumber id="price" @bind-Value="Game.Price" class="form-control"/>
+					<InputNumber id="price" @bind-Value="Game.Price" class="form-control" />
 					<ValidationMessage For="()=> Game.Price" />
 				</div>
 
 				<div class="mb-3">
 					<label for="releaseDate" class="form-label">Release Date:</label>
-					<InputDate id="releaseDate" @bind-Value="Game.ReleaseDate" class="form-control"/>
-					<ValidationMessage For="()=> Game.ReleaseDate"/>
+					<InputDate id="releaseDate" @bind-Value="Game.ReleaseDate" class="form-control" />
+					<ValidationMessage For="()=> Game.ReleaseDate" />
 				</div>
 
 				<button type="submit" class="btn btn-primary">Save</button>
@@ -66,7 +66,7 @@ else
 
 
 	[Parameter]
-	public int? Id { get; set;}
+	public int? Id { get; set; }
 
 	[SupplyParameterFromForm]
 	private GameDetails? Game { get; set; }
@@ -75,7 +75,7 @@ else
 
 	private Genre[]? _Genres;
 
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
 		if (Game is not null)
 		{
@@ -84,27 +84,27 @@ else
 
 		if (Id is not null)
 		{
-			Game = GamesClient.GetGame(Id.Value);
+			Game = await GamesClient.GetGameAsync(Id.Value);
 			_Title = $"Edit  {Game.Name}";
 		}
 		else
 		{
 			Game = new()
-			{
-				Name = string.Empty,
-				ReleaseDate = DateOnly.FromDateTime(DateTime.Now)
-			};
+				{
+					Name = string.Empty,
+					ReleaseDate = DateOnly.FromDateTime(DateTime.Now)
+				};
 			_Title = "New Game Creating";
 		}
 	}
 
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		_Genres = GenresClient.GetGenre();
+		_Genres = await GenresClient.GetGenreAsync();
 	}
 
-	private void HandleSubmit()
+	private async Task HandleSubmitAsync()
 	{
 
 		ArgumentNullException.ThrowIfNull(Game);
@@ -112,18 +112,17 @@ else
 
 		if (Id is null)
 		{
-			 GamesClient.AddGame(Game);
+			await GamesClient.AddGameAsync(Game);
 
 		}
 		else
 		{
 			Game.Id = Id.Value;
-			GamesClient.UpdateGame(Game);
+			await GamesClient.UpdateGameAsync(Game);
 		}
 
-		 NavigationManager.NavigateTo("");
-		 //единственный выход просто запустить cmd dotnet watch, не через studio
-
+		NavigationManager.NavigateTo("");
+		//единственный выход просто запустить cmd dotnet watch, не через studio
 	}
 
 

@@ -32,7 +32,7 @@ namespace WebDespair.Endpoints
 
                      return game is null ?
                          Results.NotFound() :
-                         Results.Ok(game.ToGameSummaryDto());
+                         Results.Ok(game.ToGameDetailsDto());
 
                  })
                  .WithName(getGameEndpointName);

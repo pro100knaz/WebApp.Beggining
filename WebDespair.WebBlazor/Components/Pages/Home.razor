@@ -31,8 +31,8 @@ else
 		{
 			<tr>
 				<td>@game.Id</td>
-				<td>@game.Genre</td>
 				<td>@game.Name</td>
+				<td>@game.Genre</td>
 				<td class="text-end">@game.Price.ToString("C2", new CultureInfo("en-US"))</td>
 				<td>@game.ReleaseDate</td>
 				<td>
@@ -59,9 +59,9 @@ else
 {
 	private GameSummary[]? games;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		games = GameClient.GetGames();
+		games = await GameClient.GetGamesAsync();
 	}
 
 	private static string GameUrl(int id) => $"/editgame/{id}";
