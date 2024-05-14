@@ -1,6 +1,6 @@
 ﻿@page "/editgame"
 @page "/editgame/{id:int}"
-
+@rendermode InteractiveServer
 
 @inject NavigationManager NavigationManager
 @inject GamesClient GamesClient
@@ -122,6 +122,7 @@ else
 		}
 
 		 NavigationManager.NavigateTo("");
+		 //единственный выход просто запустить cmd dotnet watch, не через studio
 
 	}
 
