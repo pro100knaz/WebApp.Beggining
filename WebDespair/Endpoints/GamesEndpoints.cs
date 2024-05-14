@@ -18,9 +18,16 @@ namespace WebDespair.Endpoints
                 ;
             //Get / games
             group.MapGet("/", async (GameStoreContext dbContext) =>
-                await dbContext.Games
-                    .Include(game => game.Genre)
-                    .Select(game => game.ToGameSummaryDto()).AsNoTracking().ToListAsync());
+            {
+
+	            await Task.Delay(3000);
+
+	            return await dbContext.Games
+		            .Include(game => game.Genre)
+		            .Select(game => game.ToGameSummaryDto())
+		            .AsNoTracking()
+		            .ToListAsync();
+            });
 
 
             //Get /games/1
